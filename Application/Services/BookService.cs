@@ -1,42 +1,48 @@
 ﻿using Application.Books.Dto;
 using Application.Services.Abstractions;
+using AutoMapper;
+using Core.Entities;
+using Infrastructure.Repositories;
+using Mapster;
 
 namespace Application.Services;
 
 public class BookService : IBookService
 {
-    public IEnumerable<BookDto> GetAllBooks()
-    {
-        throw new NotImplementedException();
-    }
+    private readonly IRepository<Book> _repository;
 
-    public IEnumerable<BookDto> GetAllBooksPaginated(int page, int countOnPage)
-    {
-        throw new NotImplementedException();
-    }
+    public BookService(IRepository<Book> repository) => 
+        _repository = repository;
 
-    public BookDto FindById(int id)
-    {
-        throw new NotImplementedException();
-    }
+    public List<BookDto> GetAllBooks() 
+        => _repository.FindAll()
+            .ProjectToType<BookDto>()
+            .ToList();
 
-    public BookDto FindByIsbn(string isbn)
-    {
-        throw new NotImplementedException();
-    }
+    public BookDto? FindById(int id)
+        => _repository
+            .FindByCondition(book => book.Id == id)
+            .ProjectToType<BookDto>()
+            .FirstOrDefault();
+
+    public BookDto? FindByIsbn(string isbn) 
+        => _repository
+            .FindByCondition(book => book.Isbn == isbn)
+            .ProjectToType<BookDto>()
+            .FirstOrDefault();
 
     public BookDto? AddBook(BookDto bookDto)
-    {
-        throw new NotImplementedException();
-    }
+        => _repository
+            .Create(bookDto.Adapt<Book>())
+            .Adapt<BookDto>();
 
     public void UpdateBook(BookDto bookDto)
     {
-        throw new NotImplementedException();
+        _repository.Update(bookDto.Adapt<Book>());
     }
 
     public void RemoveBook(BookDto bookDto)
     {
-        throw new NotImplementedException();
+        _repository.Delete(bookDto.Adapt<Book>());
     }
 }

@@ -1,3 +1,5 @@
+using Application.Services;
+using Application.Services.Abstractions;
 using Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,11 +9,15 @@ string identityConnectionString = builder.Configuration.GetConnectionString(name
                                   ?? throw new ArgumentNullException(nameof(identityConnectionString),
                                       "identity connection string is not specified");
 var identitySection = builder.Configuration.GetSection("Identity");
-// Add services to the container.
 
+// Add services to the container.
 builder.Services.AddSqlServerDbAndIdentity(dbConnectionString, identityConnectionString, identitySection);
 
+builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -27,6 +33,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseIdentityServer();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
