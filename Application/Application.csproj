@@ -10,4 +10,8 @@
       <Folder Include="Books\MappingProfiles" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.24.0" />
+    </ItemGroup>
+
 </Project>
