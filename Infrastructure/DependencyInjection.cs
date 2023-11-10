@@ -23,8 +23,6 @@ public static class DependencyInjection
     {
         services.AddDbContext<AppDbContext>(builder =>
             builder.UseSqlServer(connectionString));
-        
-        services.AddTransient<IRepository<Book>, BookRepository>();
 
         services.AddDbContext<IdentityContext>(builder =>
             builder.UseSqlServer(identityConnectionString));
@@ -56,7 +54,6 @@ public static class DependencyInjection
             })
             .AddJwtBearer(options =>
             {
-                options.Authority = identitySection["Authority"];
                 options.SaveToken = true;
 
                 options.TokenValidationParameters.ValidateAudience = false;
@@ -67,7 +64,9 @@ public static class DependencyInjection
                 options.TokenValidationParameters.IssuerSigningKey =
                     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(identitySection["Secret"].ToSha256()));
             });
-
+        
+        services.AddScoped<IRepository<Book>, BookRepository>();
+        
         return services;
     }
 }

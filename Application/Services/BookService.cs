@@ -26,7 +26,7 @@ public class BookService : IBookService
 
     public List<BookDto> GetOwedBooks()
         => _repository
-            .FindByCondition(book => DateOnly.FromDateTime(DateTime.Now) >= book.DateUntilMustBeReturned)
+            .FindByCondition(book => DateOnly.FromDateTime(DateTime.Now) >= book.ReturningDate)
             .ProjectToType<BookDto>()
             .ToList();
 
@@ -61,7 +61,7 @@ public class BookService : IBookService
         if (_repository.FindByCondition(book => book.Id == id)
                 .FirstOrDefault() is not { DateBorrowed: not null } returnedBook)
             return false;
-        (returnedBook.DateBorrowed, returnedBook.DateUntilMustBeReturned) = (null, null);
+        (returnedBook.DateBorrowed, returnedBook.ReturningDate) = (null, null);
         _repository.Update(returnedBook);
         return true;
     }

@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
 
-public abstract class BookRepository : IRepository<Book>
+public class BookRepository : IRepository<Book>
 {
-    private readonly DbContext _context;
+    private readonly AppDbContext _context;
 
-    protected BookRepository(DbContext context) => _context = context;
+    public BookRepository(AppDbContext context) => _context = context;
 
     public Book Create(Book item) 
         => _context.Set<Book>().Add(item).Entity;
