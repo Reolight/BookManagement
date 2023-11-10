@@ -4,6 +4,7 @@ using Core.Entities;
 using IdentityModel;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,28 +23,29 @@ public static class DependencyInjection
     {
         services.AddDbContext<AppDbContext>(builder =>
             builder.UseSqlServer(connectionString));
+        
         services.AddTransient<IRepository<Book>, BookRepository>();
 
         services.AddDbContext<IdentityContext>(builder =>
             builder.UseSqlServer(identityConnectionString));
         services.AddDefaultIdentity<AppUser>(
-            options =>
-            {
-                options.SignIn.RequireConfirmedAccount = false;
-                options.User.RequireUniqueEmail = true;
+                options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                    options.User.RequireUniqueEmail = true;
 
-                options.Password.RequireDigit = false;
-                options.Password.RequiredLength = 3;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequiredUniqueChars = 0;
-                options.Password.RequireNonAlphanumeric = false;
-            })
-            .AddEntityFrameworkStores<IdentityContext>();
+                    options.Password.RequireDigit = false;
+                    options.Password.RequiredLength = 3;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequiredUniqueChars = 0;
+                    options.Password.RequireNonAlphanumeric = false;
+                })
+            .AddEntityFrameworkStores<IdentityContext>()
+            .AddDefaultTokenProviders();
 
-        services.AddIdentityServer()
-            .AddApiAuthorization<AppUser, IdentityContext>();
-        
+        // clearing mapping for such claims as sub, cuz it can be named as schemas.xmlsoap.org...
+        // and it wouldn't be recognized by User.Identity.GetSubjectId() [throws exception: sub claim not found]
         JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         JwtSecurityTokenHandler.DefaultOutboundClaimTypeMap.Clear();
 
@@ -58,10 +60,12 @@ public static class DependencyInjection
                 options.SaveToken = true;
 
                 options.TokenValidationParameters.ValidateAudience = false;
+                options.TokenValidationParameters.ValidateIssuer = true;
+                options.TokenValidationParameters.ValidateIssuerSigningKey = true;
+                
                 options.TokenValidationParameters.ValidIssuer = identitySection["Issuer"];
                 options.TokenValidationParameters.IssuerSigningKey =
                     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(identitySection["Secret"].ToSha256()));
-                options.TokenValidationParameters.ValidateIssuerSigningKey = true;
             });
 
         return services;

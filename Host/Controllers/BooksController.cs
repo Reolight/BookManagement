@@ -32,6 +32,16 @@ public class BookController : ControllerBase
             ? NotFound()
             : Ok(book);
 
+    [HttpGet("/borrowed")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult GetBorrowedBooks() 
+        => Ok(_bookService.GetBorrowedBooks());
+
+    [HttpGet("/owed")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IActionResult GetOwedBooks()
+        => Ok(_bookService.GetOwedBooks());
+    
     [HttpDelete, ProducesResponseType(StatusCodes.Status204NoContent)]
     public IActionResult DeleteBook(int id)
     {
@@ -57,4 +67,20 @@ public class BookController : ControllerBase
         _bookService.UpdateBook(id, updateDto);
         return Accepted();
     }
+
+    [HttpPatch("{id}/borrow")]
+    [ProducesResponseType(StatusCodes.Status202Accepted),
+     ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult BorrowBook(int id, [FromBody] BookBorrowDto borrowDto) 
+        => _bookService.BorrowBook(id, borrowDto)
+        ? Accepted()
+        : NotFound("There is no such book or it was already borrowed");
+
+    [HttpPatch("{id}/return")]
+    [ProducesResponseType(StatusCodes.Status202Accepted),
+     ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public IActionResult ReturnOwedBook(int id)
+        => _bookService.ReturnBook(id)
+            ? Accepted()
+            : BadRequest("There is no such book in the library or it was already returned");
 }
