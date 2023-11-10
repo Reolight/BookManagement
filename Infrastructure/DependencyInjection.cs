@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Formats.Tar;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Core.Entities;
 using IdentityModel;
@@ -62,11 +63,12 @@ public static class DependencyInjection
                 
                 options.TokenValidationParameters.ValidIssuer = identitySection["Issuer"];
                 options.TokenValidationParameters.IssuerSigningKey =
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(identitySection["Secret"].ToSha256()));
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(identitySection["Secret"] ??
+                                                                    throw new NullReferenceException(
+                                                                        "Secret not found in appsettings.json")));
             });
         
         services.AddScoped<IRepository<Book>, BookRepository>();
-        
         return services;
     }
 }

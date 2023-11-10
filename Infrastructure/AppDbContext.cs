@@ -13,9 +13,28 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // even without this line EF will find PK correctly by it's name 
         modelBuilder.Entity<Book>()
             .HasKey(book => book.Id);
 
+        // isbn has 13 digits max (hyphens must be omitted)
+        modelBuilder.Entity<Book>()
+            .Property(book => book.Isbn)
+            .HasMaxLength(13);
+
+        modelBuilder.Entity<Book>()
+            .Property(book => book.Author)
+            .HasMaxLength(64);
+
+        modelBuilder.Entity<Book>()
+            .Property(book => book.Genre)
+            .HasMaxLength(64);
+        
+        modelBuilder.Entity<Book>()
+            .Property(book => book.Name)
+            .HasMaxLength(128);
+        
+        // some people search books by isbn 
         modelBuilder.Entity<Book>()
             .HasIndex(book => book.Isbn);
     }

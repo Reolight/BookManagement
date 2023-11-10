@@ -1,4 +1,5 @@
-﻿using Application.Books.Dto;
+﻿using System.Text;
+using Application.Books.Dto;
 using Application.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,10 +28,14 @@ public class BookController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK),
      ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult GetBookByIsbn([FromQuery] string isbn)
-        => _bookService.GetByIsbn(isbn) is not { } book
+    public IActionResult GetBookByIsbn(string isbn)
+    {
+        
+        
+        return _bookService.GetByIsbn(isbn) is not { } book
             ? NotFound()
             : Ok(book);
+    }
 
     [HttpGet("/borrowed")]
     [ProducesResponseType(StatusCodes.Status200OK)]
