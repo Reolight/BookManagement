@@ -24,9 +24,16 @@ public class UserService : IUserService
         _configuration = configuration;
     }
 
-    public Task<bool> RegisterAsync(RegisterDto registerModel)
+    public async Task<bool> RegisterAsync(RegisterDto registerModel)
     {
-        throw new NotImplementedException();
+        AppUser user = new AppUser
+        {
+            UserName = registerModel.Username,
+            Email = registerModel.Email
+        };
+
+        var identityResult = await _userManager.CreateAsync(user, registerModel.Password);
+        return identityResult.Succeeded;
     }
 
     public async Task<string?> LoginAsync(LoginDto loginModel)
