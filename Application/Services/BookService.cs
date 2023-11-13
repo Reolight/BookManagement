@@ -56,7 +56,7 @@ public class BookService : IBookService
         if (!DateOnly.TryParse(borrowDto.BorrowedDate, out DateOnly borrowDate) ||
                 !DateOnly.TryParse(borrowDto.ReturnDate, out DateOnly returnDate) ||
                 borrowDate > returnDate ||
-                _repository.FindByCondition(book => book.Id == id)
+                _repository.FindByCondition(book => book.Id == id || book.DateBorrowed == null)
                 .FirstOrDefault() is not { } borrowedBook)
             return false;
         
