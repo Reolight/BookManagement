@@ -10,17 +10,23 @@ public class BookRepository : IRepository<Book>
 
     public BookRepository(AppDbContext context) => _context = context;
 
-    public Book Create(Book item) 
-        => _context.Set<Book>().Add(item).Entity;
+    public Book Create(Book item)
+    {
+        var entity = _context.Set<Book>().Add(item).Entity;
+        _context.SaveChanges();
+        return entity;
+    }
 
     public void Update(Book item)
     {
         _context.Set<Book>().Update(item);
+        _context.SaveChanges();
     }
 
     public void Delete(Book item)
     {
         _context.Set<Book>().Remove(item);
+        _context.SaveChanges();
     }
 
     public IQueryable<Book> FindAll()

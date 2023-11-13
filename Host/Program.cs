@@ -1,3 +1,4 @@
+using Application;
 using Application.Services;
 using Application.Services.Abstractions;
 using Infrastructure;
@@ -16,6 +17,7 @@ builder.Services.AddSqlServerDbAndIdentity(dbConnectionString, identityConnectio
 
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddMappingProfiles();
 
 builder.Services.AddControllers();
 

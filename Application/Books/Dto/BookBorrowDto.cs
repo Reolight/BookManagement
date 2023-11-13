@@ -4,6 +4,6 @@
 // TODO: ISBN parser. There are hyphens for best reading. Should be deleted before requesting smth from db...
 public class BookBorrowDto
 {
-    public DateOnly BorrowedDate { get; set; }
-    public DateOnly ReturnDate { get; set; }
+    public string BorrowedDate { get; set; }
+    public string ReturnDate { get; set; }
 }

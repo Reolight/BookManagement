@@ -9,5 +9,5 @@ public class BookDto
     public string Description { get; set; } = string.Empty;
     public string Author { get; set; } = string.Empty;
     public DateOnly? DateBorrowed { get; set; }
-    public DateOnly? DateUntilMustBeReturned { get; set; }
+    public DateOnly? ReturningDate { get; set; }
 }

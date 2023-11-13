@@ -11,7 +11,7 @@ public interface IBookService
     public BookDto? GetById(int id);
     public BookDto? GetByIsbn(string isbn);
     public BookDto? AddBook(BookCreationDto bookDto);
-    public void UpdateBook(int id, BookUpdateDto bookDto);
+    public void UpdateBook(int id, BookUpdateDto bookUpdateDto);
     public bool BorrowBook(int id, BookBorrowDto borrowDto);
     public bool ReturnBook(int id);
     public void RemoveBook(int id);

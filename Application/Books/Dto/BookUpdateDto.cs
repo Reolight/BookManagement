@@ -1,10 +1,14 @@
-﻿namespace Application.Books.Dto;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Application.Books.Dto;
 
 public class BookUpdateDto
 {
-    public string? Isbn { get; set; } = string.Empty; 
-    public string? Name { get; set; } = string.Empty;
-    public string? Genre { get; set; } = string.Empty;
-    public string? Description { get; set; } = string.Empty;
-    public string? Author { get; set; } = string.Empty;
+    [MaxLength(128)]
+    public string? Name { get; set; }
+    [MaxLength(64)]
+    public string? Genre { get; set; }
+    public string? Description { get; set; }
+    [MaxLength(64)]
+    public string? Author { get; set; }
 }

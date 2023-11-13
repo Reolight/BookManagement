@@ -10,13 +10,14 @@ public class BookService : IBookService
 {
     private readonly IRepository<Book> _repository;
 
-    public BookService(IRepository<Book> repository) => 
-        _repository = repository;
+    public BookService(IRepository<Book> repository) => _repository = repository;
 
-    public List<BookDto> GetAllBooks() 
-        => _repository.FindAll()
-            .ProjectToType<BookDto>()
-            .ToList();
+    public List<BookDto> GetAllBooks()
+    {
+        var all = _repository.FindAll();
+        var converted = all.ProjectToType<BookDto>();
+        return converted.ToList();
+    }
 
     public List<BookDto> GetBorrowedBooks()
         => _repository
@@ -25,10 +26,13 @@ public class BookService : IBookService
             .ToList();
 
     public List<BookDto> GetOwedBooks()
-        => _repository
-            .FindByCondition(book => DateOnly.FromDateTime(DateTime.Now) >= book.ReturningDate)
+    {
+        var currentDate = DateOnly.FromDateTime(DateTime.Now);
+        return _repository
+            .FindByCondition(book => currentDate >= book.ReturningDate)
             .ProjectToType<BookDto>()
             .ToList();
+    }
 
     public BookDto? GetById(int id)
         => _repository
@@ -49,9 +53,13 @@ public class BookService : IBookService
 
     public bool BorrowBook(int id, BookBorrowDto borrowDto)
     {
-        if (_repository.FindByCondition(book => book.Id == id)
-                .FirstOrDefault() is not { } borrowedBook || borrowDto.BorrowedDate <= borrowDto.ReturnDate)
+        if (!DateOnly.TryParse(borrowDto.BorrowedDate, out DateOnly borrowDate) ||
+                !DateOnly.TryParse(borrowDto.ReturnDate, out DateOnly returnDate) ||
+                borrowDate > returnDate ||
+                _repository.FindByCondition(book => book.Id == id)
+                .FirstOrDefault() is not { } borrowedBook)
             return false;
+        
         _repository.Update(borrowDto.Adapt(borrowedBook));
         return true;
     }
@@ -66,12 +74,13 @@ public class BookService : IBookService
         return true;
     }
 
-    public void UpdateBook(int id, BookUpdateDto bookDto)
+    public void UpdateBook(int id, BookUpdateDto bookUpdateDto)
     {
         if (_repository.FindByCondition(book => book.Id == id)
-                .FirstOrDefault() is not {} bookToUpdate)
+                .FirstOrDefault() is not {} book)
             return;
-        _repository.Update(bookDto.Adapt(bookToUpdate));
+        var updatedBook = bookUpdateDto.Adapt(book);
+        _repository.Update(updatedBook);
     }
 
     public void RemoveBook(int id)

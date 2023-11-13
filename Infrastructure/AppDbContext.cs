@@ -20,7 +20,8 @@ public class AppDbContext : DbContext
         // isbn has 13 digits max (hyphens must be omitted)
         modelBuilder.Entity<Book>()
             .Property(book => book.Isbn)
-            .HasMaxLength(13);
+            // isbn has 13 digits and 4 delimiters (hyphens usually)
+            .HasMaxLength(17);
 
         modelBuilder.Entity<Book>()
             .Property(book => book.Author)

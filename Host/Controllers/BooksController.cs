@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Host.Controllers;
 
 [ApiController, Authorize, Route("[controller]")]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class BookController : ControllerBase
 {
     private readonly IBookService _bookService;
@@ -20,29 +21,32 @@ public class BookController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK),
      ProducesResponseType(StatusCodes.Status404NotFound)]
+     
     public IActionResult GetBookById(int id)
         => _bookService.GetById(id) is not { } book
             ? NotFound()
             : Ok(book);
 
-    [HttpGet]
+    [HttpGet("isbn/{isbn}")]
     [ProducesResponseType(StatusCodes.Status200OK),
-     ProducesResponseType(StatusCodes.Status404NotFound)]
+     ProducesResponseType(StatusCodes.Status404NotFound),
+     ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult GetBookByIsbn(string isbn)
     {
-        
+        if (isbn.Sum(c => char.IsDigit(c)? 0 : 1) != 4 && isbn.Length != 17)
+            return BadRequest("ISBN provided is not correct");
         
         return _bookService.GetByIsbn(isbn) is not { } book
             ? NotFound()
             : Ok(book);
     }
 
-    [HttpGet("/borrowed")]
+    [HttpGet("borrowed")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetBorrowedBooks() 
         => Ok(_bookService.GetBorrowedBooks());
 
-    [HttpGet("/owed")]
+    [HttpGet("owed")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetOwedBooks()
         => Ok(_bookService.GetOwedBooks());
@@ -76,10 +80,10 @@ public class BookController : ControllerBase
     [HttpPatch("{id}/borrow")]
     [ProducesResponseType(StatusCodes.Status202Accepted),
      ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult BorrowBook(int id, [FromBody] BookBorrowDto borrowDto) 
-        => _bookService.BorrowBook(id, borrowDto)
-        ? Accepted()
-        : NotFound("There is no such book or it was already borrowed");
+    public IActionResult BorrowBook(int id, [FromBody] BookBorrowDto borrowDto) =>
+        _bookService.BorrowBook(id, borrowDto)
+            ? Accepted()
+            : NotFound("There is no such book or it was already borrowed");
 
     [HttpPatch("{id}/return")]
     [ProducesResponseType(StatusCodes.Status202Accepted),
