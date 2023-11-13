@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Infrastructure.Converters;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure;
@@ -8,8 +9,12 @@ public class AppDbContext : DbContext
 {
     public DbSet<Book> Books = null!;
 
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-    public AppDbContext() { }
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) => CreateDb();
+
+    public AppDbContext() => CreateDb();
+
+    private void CreateDb() =>
+        Database.EnsureCreated();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
