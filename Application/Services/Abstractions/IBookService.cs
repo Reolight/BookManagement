@@ -9,8 +9,8 @@ public interface IBookService
     public List<BookDto> GetBorrowedBooks();
     public List<BookDto> GetOwedBooks();
     public BookDto? GetById(int id);
-    public BookDto? GetByIsbn(string isbn);
-    public BookDto? AddBook(BookCreationDto bookDto);
+    public List<BookDto> GetByIsbn(string isbn);
+    public BookDto AddBook(BookCreationDto bookDto);
     public void UpdateBook(int id, BookUpdateDto bookUpdateDto);
     public bool BorrowBook(int id, BookBorrowDto borrowDto);
     public bool ReturnBook(int id);

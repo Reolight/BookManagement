@@ -15,6 +15,12 @@ public class AuthorizeController  : ControllerBase
         _userService = userService;
     }
 
+    /// <summary>
+    /// Authorize user by username or email and password
+    /// </summary>
+    /// <param name="loginModel">Contains username, password and rememberMe fields</param>
+    /// <returns>Token in case of success</returns>
+    /// <response code="400">Username or password is wrong</response>
     [HttpPost("login"), AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK),
      ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -25,6 +31,11 @@ public class AuthorizeController  : ControllerBase
         return Ok(token);
     }
 
+    /// <summary>
+    /// Creates a new user.
+    /// </summary>
+    /// <param name="registerModel">Model that contains username, email, password and confirm password fields to create new user </param>
+    /// <response code="400">Account is already registered or wrong data entered</response>
     [HttpPost("register"), AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK),
      ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -35,6 +46,9 @@ public class AuthorizeController  : ControllerBase
         return BadRequest();
     }
 
+    /// <summary>
+    /// Logout endpoint
+    /// </summary>
     [HttpPost("logout"), Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Logout()

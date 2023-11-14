@@ -25,6 +25,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+    options.SwaggerDoc("v1", new OpenApiInfo{ Title = "Library API", Version = "v1"} );
+
+    var path = Path.Combine(AppContext.BaseDirectory, "Host.xml");
+    options.IncludeXmlComments(path);
+    
     options.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,

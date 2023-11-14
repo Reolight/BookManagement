@@ -40,13 +40,13 @@ public class BookService : IBookService
             .ProjectToType<BookDto>()
             .FirstOrDefault();
 
-    public BookDto? GetByIsbn(string isbn) 
+    public List<BookDto> GetByIsbn(string isbn)
         => _repository
             .FindByCondition(book => book.Isbn == isbn)
             .ProjectToType<BookDto>()
-            .FirstOrDefault();
+            .ToList();
 
-    public BookDto? AddBook(BookCreationDto bookDto)
+    public BookDto AddBook(BookCreationDto bookDto)
         => _repository
             .Create(bookDto.Adapt<Book>())
             .Adapt<BookDto>();
@@ -77,9 +77,9 @@ public class BookService : IBookService
     public void UpdateBook(int id, BookUpdateDto bookUpdateDto)
     {
         if (_repository.FindByCondition(book => book.Id == id)
-                .FirstOrDefault() is not {} book)
+                .FirstOrDefault() is not {} bookUpdated)
             return;
-        var updatedBook = bookUpdateDto.Adapt(book);
+        var updatedBook = bookUpdateDto.Adapt(bookUpdated);
         _repository.Update(updatedBook);
     }
 
