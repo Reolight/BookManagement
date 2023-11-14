@@ -46,7 +46,9 @@ dotnet tool update --global dotnet-ef
    dotnet run --project Host --launch-profile https
    ```
 
-a. Register at *authorize/register* endpoint
-b. login at *authorize/login* endpoint
-c. Copy token from the response body of step b, press *Authorize* button, write down "bearer " *(with whitespace and without quotes)* and paste the token.
-d. Now you have access to all *books/* enpoints.
+## How to register & login
+
+1. Register at *authorize/register* endpoint
+2. login at *authorize/login* endpoint
+3. Copy token from the response body of step b, press *Authorize* button, write down "bearer " *(with whitespace and without quotes)* and paste the token.
+4. Now you have access to all *books/* enpoints.
