@@ -9,12 +9,9 @@ public class AppDbContext : DbContext
 {
     public DbSet<Book> Books = null!;
 
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) => CreateDb();
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    public AppDbContext() => CreateDb();
-
-    private void CreateDb() =>
-        Database.EnsureCreated();
+    public AppDbContext() { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
