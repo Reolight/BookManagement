@@ -45,6 +45,7 @@ dotnet tool update --global dotnet-ef
    ```
    dotnet run --project Host --launch-profile https
    ```
+5. Open [Swagger page](https://localhost:7203/swagger/index.html) if it does not open automatically
 
 ## How to register & login
 
